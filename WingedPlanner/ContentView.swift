@@ -8,18 +8,63 @@
 import SwiftUI
 
 struct ContentView: View {
+    
     var body: some View {
-       NavigationStack {
-           List {
-               Text("Hello, world!")
-               Text("Hello, world!")
-           }.navigationTitle("Winged Planner")
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        
+        Text("Winged Planner")
+            .bold()
+            .italic()
+            .foregroundStyle(.green)
+        
+        
+        NavigationView {
+            VStack {
+                List {
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 1")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 2")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 3")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 4")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 5")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "circle")
+                        
+                        Text("Tarefa 6")
+                            .foregroundColor(.gray)
+                    }
+                }
+                .navigationTitle("Minhas Tarefas")
+            }
         }
-        .padding()
     }
 }
 

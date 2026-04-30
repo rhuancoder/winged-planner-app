@@ -8,62 +8,83 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showingAddTask = false
     
     var body: some View {
+        VStack(spacing: 8) {
+            Text("Winged Planner")
+                .font(.custom("Blackrush", size: 60))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(
+            LinearGradient(
+                colors: [.purple, .indigo],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
         
-        Text("Winged Planner")
-            .bold()
-            .italic()
-            .foregroundStyle(.green)
-        
-        
-        NavigationView {
-            VStack {
-                List {
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 1")
-                            .foregroundColor(.gray)
-                    }
+        NavigationStack {
+            List {
+                HStack {
+                    Image(systemName: "circle")
                     
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 2")
-                            .foregroundColor(.gray)
-                    }
+                    Text("Tarefa 1")
+                        .foregroundStyle(.gray)
+                }
+                
+                HStack {
+                    Image(systemName: "circle")
                     
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 3")
-                            .foregroundColor(.gray)
-                    }
+                    Text("Tarefa 2")
+                        .foregroundStyle(.gray)
+                }
+                
+                HStack {
+                    Image(systemName: "circle")
                     
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 4")
-                            .foregroundColor(.gray)
-                    }
+                    Text("Tarefa 3")
+                        .foregroundStyle(.gray)
+                }
+                
+                HStack {
+                    Image(systemName: "circle")
                     
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 5")
-                            .foregroundColor(.gray)
-                    }
+                    Text("Tarefa 4")
+                        .foregroundStyle(.gray)
+                }
+                
+                HStack {
+                    Image(systemName: "circle")
                     
-                    HStack {
-                        Image(systemName: "circle")
-                        
-                        Text("Tarefa 6")
-                            .foregroundColor(.gray)
+                    Text("Tarefa 5")
+                        .foregroundStyle(.gray)
+                }
+                
+                HStack {
+                    Image(systemName: "circle")
+                    
+                    Text("Tarefa 6")
+                        .foregroundStyle(.gray)
+                }
+            }
+            .listStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .navigationTitle("Minhas Tarefas")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showingAddTask = true
+                    }) {
+                        Image(systemName: "plus")
                     }
                 }
-                .navigationTitle("Minhas Tarefas")
             }
+        }
+        .sheet(isPresented: $showingAddTask) {
+            AddTaskView()
         }
     }
 }

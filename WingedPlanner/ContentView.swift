@@ -7,73 +7,90 @@
 
 import SwiftUI
 
+
+
 struct ContentView: View {
+    @Environment(\.colorScheme) var colorScheme
     @State private var showingAddTask = false
+    @State private var showingArchives = false
+    @State private var tasks: [TaskModel] = TaskStorage.shared.loadTasks()
+    @State private var editingTask: TaskModel?
+    
+    private var backgroundColor: Color {
+        colorScheme == .dark ? Color(.black).opacity(0.9) : .white
+    }
+    
+    private var activeTasks: [TaskModel] {
+        tasks.filter { !$0.isArchived }
+    }
+    
+    private func saveTasks() {
+        TaskStorage.shared.saveTasks(tasks)
+    }
+    
+    private func archiveTask(_ task: TaskModel) {
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[index].isArchived = true
+        }
+    }
+    
+    private func deleteTask(_ task: TaskModel) {
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks.remove(at: index)
+        }
+    }
     
     var body: some View {
         VStack(spacing: 8) {
             Text("Winged Planner")
                 .font(.custom("Blackrush", size: 60))
-                .foregroundStyle(.white)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.purple, .indigo],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
-        .background(
-            LinearGradient(
-                colors: [.purple, .indigo],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        )
+        .background(backgroundColor)
         
         NavigationStack {
-            List {
+            List(activeTasks) { task in
                 HStack {
-                    Image(systemName: "circle")
+                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(.primary)
+                        .onTapGesture {
+                            archiveTask(task)
+                        }
                     
-                    Text("Tarefa 1")
-                        .foregroundStyle(.gray)
+                    Text(task.title)
+                        .foregroundStyle(.primary)
                 }
-                
-                HStack {
-                    Image(systemName: "circle")
-                    
-                    Text("Tarefa 2")
-                        .foregroundStyle(.gray)
+                .onLongPressGesture(minimumDuration: 0.5) {
+                    self.editingTask = task
                 }
-                
-                HStack {
-                    Image(systemName: "circle")
-                    
-                    Text("Tarefa 3")
-                        .foregroundStyle(.gray)
-                }
-                
-                HStack {
-                    Image(systemName: "circle")
-                    
-                    Text("Tarefa 4")
-                        .foregroundStyle(.gray)
-                }
-                
-                HStack {
-                    Image(systemName: "circle")
-                    
-                    Text("Tarefa 5")
-                        .foregroundStyle(.gray)
-                }
-                
-                HStack {
-                    Image(systemName: "circle")
-                    
-                    Text("Tarefa 6")
-                        .foregroundStyle(.gray)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) {
+                        deleteTask(task)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
                 }
             }
             .listStyle(.plain)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("Minhas Tarefas")
+            .navigationTitle("My Tasks")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        showingArchives = true
+                    }) {
+                        Image(systemName: "archivebox")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         showingAddTask = true
@@ -84,7 +101,21 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingAddTask) {
-            AddTaskView()
+            AddTaskView(tasks: $tasks)
+        }
+        .sheet(item: $editingTask) { task in
+            EditTaskView(task: task) { updatedTask in
+                if let index = tasks.firstIndex(where: { $0.id == updatedTask.id }) {
+                    tasks[index] = updatedTask
+                    saveTasks()
+                }
+            }
+        }
+        .sheet(isPresented: $showingArchives) {
+            ArchivesView(tasks: $tasks)
+        }
+        .onChange(of: tasks) {
+            saveTasks()
         }
     }
 }

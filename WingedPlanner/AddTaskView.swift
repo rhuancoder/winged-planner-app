@@ -10,23 +10,28 @@ import SwiftUI
 struct AddTaskView: View {
     @Environment(\.dismiss) var dismiss
     @State private var taskTitle = ""
+    @Binding var tasks: [TaskModel]
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section {
-                    TextField("Digite a nova tarefa", text: $taskTitle)
+                    TextField("Enter task name", text: $taskTitle)
                 }
             }
-            .navigationTitle("Adicionar Tarefa")
+            .navigationTitle("Add Task")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Salvar") {
+                    Button("Save") {
+                        if !taskTitle.isEmpty {
+                            tasks.append(TaskModel(title: taskTitle))
+                        }
                         dismiss()
                     }
                 }
@@ -36,5 +41,7 @@ struct AddTaskView: View {
 }
 
 #Preview {
-    AddTaskView()
+    AddTaskView(tasks: .constant([
+        TaskModel(title: "Sample")
+    ]))
 }

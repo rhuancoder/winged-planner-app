@@ -41,61 +41,70 @@ struct ContentView: View {
     }
     
     var body: some View {
-        VStack(spacing: 8) {
-            Text("Winged Planner")
-                .font(.custom("Blackrush", size: 60))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.purple, .indigo],
-                        startPoint: .leading,
-                        endPoint: .trailing
+        VStack(spacing: 0) {
+            VStack(spacing: 2) {
+                Text("Winged Planner")
+                    .font(.custom("Blackrush", size: 40))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.purple, .indigo],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(backgroundColor)
-        
-        NavigationStack {
-            List(activeTasks) { task in
-                HStack {
-                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(.primary)
-                        .onTapGesture {
-                            archiveTask(task)
-                        }
-                    
-                    Text(task.title)
-                        .foregroundStyle(.primary)
-                }
-                .onLongPressGesture(minimumDuration: 0.5) {
-                    self.editingTask = task
-                }
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    Button(role: .destructive) {
-                        deleteTask(task)
-                    } label: {
-                        Label("Delete", systemImage: "trash")
-                    }
-                }
             }
-            .listStyle(.plain)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("My Tasks")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: {
-                        showingArchives = true
-                    }) {
-                        Image(systemName: "archivebox")
+            .frame(maxWidth: .infinity)
+            .padding(.top, 2)
+            .padding(.bottom, 8)
+            .padding(.horizontal, 16)
+            .background(backgroundColor)
+            .overlay(
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(Color.gray.opacity(0.15)),
+                alignment: .bottom
+            )
+
+            NavigationStack {
+                List(activeTasks) { task in
+                    HStack {
+                        Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(.primary)
+                            .onTapGesture {
+                                archiveTask(task)
+                            }
+                        
+                        Text(task.title)
+                            .foregroundStyle(.primary)
+                    }
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        self.editingTask = task
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(role: .destructive) {
+                            deleteTask(task)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        showingAddTask = true
-                    }) {
-                        Image(systemName: "plus")
+                .listStyle(.plain)
+                .navigationTitle("My Tasks")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: {
+                            showingArchives = true
+                        }) {
+                            Image(systemName: "archivebox")
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            showingAddTask = true
+                        }) {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }
@@ -116,6 +125,34 @@ struct ContentView: View {
         }
         .onChange(of: tasks) {
             saveTasks()
+        }
+    }
+}
+
+struct SplashView: View {
+    var body: some View {
+        ZStack {
+            Color.white
+                .ignoresSafeArea()
+
+            VStack(spacing: 10) {
+                Text("Winged Planner")
+                    .font(.custom("Blackrush", size: 64))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.purple, .indigo],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .shadow(color: Color.gray.opacity(0.25), radius: 10, x: 0, y: 4)
+
+                Text("Giving wings to your plans")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 32)
         }
     }
 }
